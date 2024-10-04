@@ -9,7 +9,6 @@ jobs:
   docker:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
-    needs: [composer, npm]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
