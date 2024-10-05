@@ -1,0 +1,1 @@
+docker build -t excelsior-pivot-server . && docker run -p 8080:8080 --add-host=excelsior2.test:host-gateway excelsior-pivot-server

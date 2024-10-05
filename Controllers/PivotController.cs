@@ -101,19 +101,31 @@ namespace PivotController.Controllers
                             httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
                         }
 
-                        // Make the HTTP request to the backend service and ignore SSL errors
-                        var response = await httpClient.GetStringAsync("https://excelsior2.test/pivot.json");
+                        // Extract the X-Forwarded-URL header from the incoming request
+                        var forwardedUrl = Request.Headers["X-Forwarded-URL"].ToString();
+
+                        if (string.IsNullOrEmpty(forwardedUrl))
+                        {
+                            Console.Error.WriteLine("X-Forwarded-URL header is missing. Using default backend URL.");
+                            forwardedUrl = $"{Request.Scheme}://{Request.Host}/pivot.json";
+                        }
+
+                        // Log the URLs for debugging
+                        Console.Error.WriteLine($"Forwarded URL: {forwardedUrl}");
+                        Console.Error.WriteLine($"Request Host: {Request.Host}");
+
+                        // Make the HTTP request to the forwarded URL and ignore SSL errors
+                        var response = await httpClient.GetStringAsync(forwardedUrl);
                         return JsonConvert.DeserializeObject<object>(response);
                     }
                     catch (HttpRequestException ex)
                     {
-                        Console.WriteLine($"Request failed: {ex.Message}");
+                        Console.Error.WriteLine($"Request failed: {ex.Message}");
                         return null; // Handle errors as needed
                     }
                 }
             });
         }
-
 
         private async Task<object> GetMembers(FetchData param)
         {
