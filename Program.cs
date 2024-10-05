@@ -1,19 +1,23 @@
 var builder = WebApplication.CreateBuilder(args);
-var CustomOrigins = "excelsior2.test";
-// Add services to the container.
+var CustomOrigins = "AllowedOrigins";
 
+// Add services to the container.
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Configure CORS to allow multiple origins
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(CustomOrigins,
     builder =>
     {
-        builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+        builder.WithOrigins("https://excelsior2.test", "https://excelsior.bitbyte.dk")
+               .AllowAnyHeader()
+               .AllowAnyMethod();
     });
 });
+
 builder.Services.AddMemoryCache((options) =>
 {
     options.SizeLimit = 100;
@@ -29,9 +33,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 app.UseCors(CustomOrigins);
 app.Run();
