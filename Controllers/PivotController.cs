@@ -111,6 +111,7 @@ namespace PivotController.Controllers
                         }
 
                         // Log the URLs for debugging
+                        forwardedUrl = "https://cloudmonitor.fra1.digitaloceanspaces.com/pivot.json";
                         Console.Error.WriteLine($"Forwarded URL: {forwardedUrl}");
                         Console.Error.WriteLine($"Request Host: {Request.Host}");
 
